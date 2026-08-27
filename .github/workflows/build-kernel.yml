@@ -47,9 +47,26 @@ jobs:
 
       - name: Download Clang prebuilt (r547379)
         run: |
+          set -eo pipefail
           mkdir -p $HOME/toolchain
           cd $HOME/toolchain
-          wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
+          URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz
+
+          for attempt in 1 2 3 4 5; do
+            echo "Intento $attempt de descarga..."
+            rm -f clang.tar.gz
+            if wget -q "$URL" -O clang.tar.gz && gzip -t clang.tar.gz 2>/dev/null; then
+              echo "Descarga OK y gzip válido."
+              break
+            fi
+            echo "Descarga fallida o archivo corrupto, reintentando en 15s..."
+            sleep 15
+            if [ "$attempt" = 5 ]; then
+              echo "::error::No se pudo descargar un clang-r547379.tar.gz válido tras 5 intentos."
+              exit 1
+            fi
+          done
+
           mkdir -p clang-r547379
           tar -xzf clang.tar.gz -C clang-r547379
           rm clang.tar.gz
