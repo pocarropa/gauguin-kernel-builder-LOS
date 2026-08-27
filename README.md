@@ -19,11 +19,29 @@ Xiaomi's fuel gauge driver (`qpnp-qg.c`) tries to authenticate a 1-Wire (Maxim D
 
 The fix forces `chip->batterysecret_support = false`, so all batteries (OEM or not) always use the standard profile lookup by battery ID resistance, skipping the OEM authentication check entirely.
 
+## Build schedule
+
+The workflow runs automatically every 7 days (Thursdays, 04:00 UTC) via a `schedule` trigger, and can also be triggered manually at any time.
+
 ## Usage
 
-1. Go to the **Actions** tab → **Build gauguin kernel** → **Run workflow**.
-2. Once finished, download the `Gauguin-Kernel-AnyKernel3` artifact.
-3. Flash the zip from recovery.
+### Running a build
+
+1. Go to the **Actions** tab → **Build gauguin kernel** → **Run workflow** (only needed for a manual/out-of-schedule build — it also runs automatically every week).
+
+### Downloading the latest build
+
+1. Go to the **Actions** tab → **Build gauguin kernel**.
+2. Open the most recent successful run (green check).
+3. Scroll down to the **Artifacts** section and download `Gauguin-Kernel-AnyKernel3`.
+
+Direct link: `https://github.com/pocarropa/gauguin-kernel-builder-LOS/actions/workflows/build-kernel.yml`
+
+Note: GitHub Actions artifacts are zipped again when downloaded from the web UI, so you'll get a zip containing the actual AnyKernel3 zip — extract it once before flashing.
+
+### Flashing
+
+Flash the extracted AnyKernel3 zip from recovery (**Apply update → Apply from internal storage/SD card**, or `adb sideload`). It won't install through the ROM's built-in "local upgrade" option, since that path verifies OTA signatures and AnyKernel3 zips aren't signed for that.
 
 ## Notes
 
