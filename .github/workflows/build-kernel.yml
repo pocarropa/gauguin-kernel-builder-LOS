@@ -2,6 +2,9 @@ name: Build gauguin kernel
 
 on:
   workflow_dispatch:
+  schedule:
+    # Cada jueves a las 04:00 UTC (cada 7 días desde hoy, 27 ago 2026)
+    - cron: '0 4 * * 4'
 
 jobs:
   build:
